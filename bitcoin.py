@@ -5,12 +5,22 @@
 import requests
 import json
 from time import sleep
-from inky import InkyPHAT
+from inky.auto import auto
 import argparse
 from PIL import Image, ImageFont, ImageDraw
 import os
 from font_fredoka_one import FredokaOne
 import datetime
+
+#display calibration
+try:
+    inky_display = auto(ask_user=True, verbose=True)
+except TypeError:
+    raise TypeError("You need to update the Inky library to >= v1.1.0")
+
+if inky_display.resolution not in ((212, 104), (250, 122)):
+    w, h = inky_display.resolution
+    raise RuntimeError("This example does not support {}x{}".format(w, h))
 
 #Variables
 CURR_DIR = os.path.dirname(os.path.realpath(__file__)) + "/"
@@ -20,7 +30,7 @@ COURIER_FONT = RESOURCES + "fonts/Courierprime.ttf"
 API_ENDPOINT = "https://api.kraken.com/0/public/Ticker"
 DP = "{:.2f}" #change the value for the required decimal places
 
-inky_display = InkyPHAT("red")
+##inky_display = InkyPHAT("yellow")
 inky_display.set_border(inky_display.WHITE)
 
 # Parsing flip arguments
@@ -177,18 +187,18 @@ img = Image.open(RESOURCES + "backdrop.png").resize(inky_display.resolution)
 draw = ImageDraw.Draw(img)
 
 # load the fonts, and text size
-font = ImageFont.truetype(FredokaOne, 32)
-font2 = ImageFont.truetype(COURIER_FONT, 12)
+font = ImageFont.truetype(FredokaOne, 45)
+font2 = ImageFont.truetype(COURIER_FONT, 15)
 font3 = ImageFont.truetype(COURIER_FONT, 24)
 
 # Text to display and location
 if len(getError())==0:
-    img.paste(btcimg, (25, 0)) 
-    img.paste(iconimg, (150, 7))
-    draw.text((72, 10), "Price", inky_display.BLACK, font=font3)
-    draw.text((80, 33), PERCENTUPDOWN + str(PERCENTAGE) + "%" + "(24h)", inky_display.BLACK, font=font2)
-    draw.text((30, 45), str(COINPRICE), inky_display.RED, font=font)
-    draw.text((37.5, 90), TIME.strftime('%d-%m-%Y %H:%M:%S'), inky_display.BLACK, font=font2)
+    #img.paste(btcimg, (25, 0)) 
+    img.paste(iconimg, (215, 50))
+    draw.text((2, 2), "$BTC Price", inky_display.BLACK, font=font3)
+    draw.text((180, 5), PERCENTUPDOWN + str(PERCENTAGE) + "%" + "(24h)", inky_display.BLACK, font=font2)
+    draw.text((3, 35), str(COINPRICE), inky_display.RED, font=font)
+    draw.text((2, 108), TIME.strftime('%m-%d-%Y            %H:%M'), inky_display.BLACK, font=font2)
 else:
     draw.text((20, 45), "INVALID PAIR", inky_display.RED, font=font3)
 
