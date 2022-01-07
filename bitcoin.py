@@ -8,7 +8,7 @@ from time import sleep
 from inky.auto import auto
 import argparse
 from PIL import Image, ImageFont, ImageDraw
-import os
+import os, sys
 from font_fredoka_one import FredokaOne
 import datetime
 
@@ -27,6 +27,7 @@ CURR_DIR = os.path.dirname(os.path.realpath(__file__)) + "/"
 RESOURCES = CURR_DIR + "resources/"
 TIME = datetime.datetime.now()
 COURIER_FONT = RESOURCES + "fonts/Courierprime.ttf"
+PIXEL_FONT = RESOURCES + "fonts/PixelSplitter-Bold.ttf"
 API_ENDPOINT = "https://api.kraken.com/0/public/Ticker"
 DP = "{:.2f}" #change the value for the required decimal places
 
@@ -43,11 +44,11 @@ args, _ = parser.parse_known_args()
 #Select currency based on currency pair input
 def findCurrency(currency):
     if currency == "GBP":
-        return str("£")
+        return str("$")
     elif currency == "USD":
         return str("$")
     elif currency == "EUR":
-        return str("€")
+        return str("$")
     elif currency == "CAD":
         return str("$")
     elif currency == "AUD":
@@ -187,7 +188,7 @@ img = Image.open(RESOURCES + "backdrop.png").resize(inky_display.resolution)
 draw = ImageDraw.Draw(img)
 
 # load the fonts, and text size
-font = ImageFont.truetype(FredokaOne, 45)
+font = ImageFont.truetype(PIXEL_FONT, 35)
 font2 = ImageFont.truetype(COURIER_FONT, 15)
 font3 = ImageFont.truetype(COURIER_FONT, 24)
 
@@ -197,7 +198,7 @@ if len(getError())==0:
     img.paste(iconimg, (215, 50))
     draw.text((2, 2), "$BTC Price", inky_display.BLACK, font=font3)
     draw.text((180, 5), PERCENTUPDOWN + str(PERCENTAGE) + "%" + "(24h)", inky_display.BLACK, font=font2)
-    draw.text((3, 35), str(COINPRICE), inky_display.RED, font=font)
+    draw.text((3, 40), str(COINPRICE), inky_display.RED, font=font)
     draw.text((2, 108), TIME.strftime('%m-%d-%Y            %H:%M'), inky_display.BLACK, font=font2)
 else:
     draw.text((20, 45), "INVALID PAIR", inky_display.RED, font=font3)
